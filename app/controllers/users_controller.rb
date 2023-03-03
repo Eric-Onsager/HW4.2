@@ -1,15 +1,28 @@
-class UsersController < ApplicationController
+class PlacesController < ApplicationController
+
+  def index
+    @places = Place.all
+  end
+
+  def show
+    if @current_user
+      @place = Place.find_by({ "id" => params["id"] })
+      @posts = Post.where({ "place_id" => @place["id"], "user_id" => @current_user["id"] })
+    else
+      flash["notice"] = "Login first."
+      redirect_to "/login"
+    end
+  end
+
   def new
-    @user = User.new
+    @place = Place.new
   end
 
   def create
-    @user = User.new
-    @user["first_name"] = params["user"]["first_name"]
-    @user["last_name"] = params["user"]["last_name"]
-    @user["email"] = params["user"]["email"]
-    @user["password"] = params["user"]["password"]
-    @user.save
-    redirect_to "/"
+    @place = Place.new
+    @place["name"] = params["place"]["name"]
+    @place.save
+    redirect_to "/places"
   end
+
 end
